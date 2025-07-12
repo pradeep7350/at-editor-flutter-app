@@ -1,20 +1,26 @@
-name: at_editor
-description: AI-powered photo editor with 8K upscale
-version: 1.0.0+1
+name: Build APK
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+on:
+  push:
+    branches: [main]
 
-dependencies:
-  flutter:
-    sdk: flutter
-  image_picker: ^1.0.7
-  dio: ^5.4.0
-  path_provider: ^2.1.1
-  permission_handler: ^11.0.1
-  gallery_saver: ^2.3.2
-  flutter_spinkit: ^5.2.0
-  cached_network_image: ^3.3.1
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.1'  # or latest stable
 
-flutter:
-  uses-material-design: true
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: at-editor-app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
